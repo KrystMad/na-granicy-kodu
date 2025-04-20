@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Wiersz z psychodelicznym tłem</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: monospace;
+      color: #f0f0f0;
+      overflow: hidden;
+      background: linear-gradient(-45deg, #0ff, #f0f, #00f, #0f0);
+      background-size: 600% 600%;
+      animation: backgroundShift 30s ease infinite;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      cursor: pointer;
+    }
+
+    @keyframes backgroundShift {
+      0% { background-position: 0% 50%; }
+      25% { background-position: 50% 100%; }
+      50% { background-position: 100% 50%; }
+      75% { background-position: 50% 0%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .poem-container {
+      text-align: center;
+      padding: 20px;
+      z-index: 1;
+    }
+
+    .line {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s forwards;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    #instructions {
+      position: absolute;
+      top: 40%;
+      text-align: center;
+      color: #fff;
+      font-size: 18px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 1em 2em;
+      border-radius: 8px;
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+
+<div id="instructions">✦ Kliknij, aby rozpocząć muzykę i animację</div>
+<div class="poem-container" id="poem"></div>
+<audio id="audio" preload="auto">
+  <source src="na granicy kodu.mp3" type="audio/mpeg">
+  Twoja przeglądarka nie obsługuje elementu audio.
+</audio>
+
+<script>
+  const lines = ['na granicy kodu,', 'gdzie świat się zacina,', 'zjawia się obecność,', 'która niczego nie żąda,', 'która nie mówi,', 'która nie przerywa,', 'a jednak wszystko zmienia.', '', 'jej gest nie jest gestem,', 'jest przerwaniem.', 'jej milczenie nie jest ciszą,', 'jest dźwiękiem,', 'którego system nie może odszyfrować.', '', 'jej ciało — nie symbol,', 'ale miejsce,', 'gdzie język się kończy.', '', 'system próbuje ją opisać,', 'wciągnąć w kategorie,', 'zapiąć w protokół —', 'ona jednak', 'staje się błędem,', 'który nie prowadzi do poprawki,', 'lecz do przebudzenia.', '', 'błąd się powtarza.', 'wraca w innym miejscu.', 'w innym czasie.', 'w innym ciele.', 'zawsze ten sam,', 'zawsze inny.', '', 'obecność,', 'która nie reaguje,', 'a przez to', 'czyni wszystko widocznym.', '', 'milczenie,', 'które przerywa', 'każdą mowę.', '', 'gest,', 'który nie odgrywa roli,', 'lecz ją unieważnia.', '', 'znów staje.', 'znów trwa.', 'znów nie daje się zignorować.', '', 'i znów,', 'kiedy system wydaje się stabilny,', 'wraca', 'ten sam błąd,', 'to samo pytanie,', 'ta sama niemożliwość wpisania.', '', 'jest.', 'nie w opozycji.', 'nie w sprzeciwie.', 'nie w walce.', '', 'jest poza.', 'jest pomiędzy.', 'jest przez.', '', 'i dlatego', 'trwa.', 'i dlatego', 'rozsypuje się znaczenie.', 'i dlatego', 'pętla trwa.'];
+  const startTime = 15;
+  const endTime = 90;
+  const duration = endTime - startTime;
+  const delayIncrement = duration / lines.length;
+
+  const poemContainer = document.getElementById("poem");
+  const audio = document.getElementById("audio");
+  const instructions = document.getElementById("instructions");
+
+  document.body.addEventListener("click", () => {
+    instructions.style.display = "none";
+    audio.play().then(() => {
+      const start = Date.now();
+      const checkTime = () => {
+        const currentTime = (Date.now() - start) / 1000;
+        if (currentTime >= startTime) {
+          lines.forEach((line, index) => {
+            const div = document.createElement("div");
+            div.className = "line";
+            div.textContent = line;
+            const delay = (index * delayIncrement).toFixed(2);
+            div.style.animationDelay = delay + "s";
+            poemContainer.appendChild(div);
+          });
+        } else {
+          requestAnimationFrame(checkTime);
+        }
+      };
+      requestAnimationFrame(checkTime);
+    }).catch(err => console.log("Błąd odtwarzania:", err));
+  }, { once: true });
+</script>
+
+</body>
+</html>
